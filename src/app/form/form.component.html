@@ -1,0 +1,138 @@
+<!-- условие для скрытия и ли показа модалки -->
+<div class="modal" *ngIf="modalShow">
+
+  <div class="form__wrapper">
+    <!-- Вызывааем или скрываем модалку -->
+    <div class="form__title">
+      <h2>Добавление смены</h2>
+      <button (click)="modal(modalShow)">
+        &times;
+      </button>
+    </div>
+    <!-- Создаем реактивную форму -->
+    <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <label for="">Тип крана <br>
+        <!-- классамми при нужных условиях деактивируем select и меняем шрифт, аналогично на других элементах формы -->
+        <select [class.input-disabled]="disableSelect" [class.dirty-input]="form.get('selectCrane')?.dirty"
+          class="form__input tap-input form-arrow" formControlName="selectCrane">
+          <option ngValue="" selected disabled hidden>Выберите тип крана...</option>
+          <option ngValue="Одинарный">Одинарный</option>
+          <option ngValue="Двойной">Двойной</option>
+        </select>
+      </label>
+
+      <label>ФИО ответственного <br>
+        <input [class.dirty-input]="form.get('employeeName')?.dirty" type="text" formControlName="employeeName"
+          class="form__input person-input" placeholder="Введите ФИО">
+        <small *ngIf="form.controls.employeeName.invalid && form.controls.employeeName.touched">
+          Для ввода используйте символы кириллицы</small>
+      </label>
+
+      <div class="form__date">
+        <div>
+          <p>Дата начала</p>
+          <!-- Для того тчобы организовать placeholder делаем замену текстового input на datetime-local при фокусе -->
+          <input (focus)="changeTypeFocusStart()" (blur)="changeTypeBlurStart()"
+            class="form__input time-input form-arrow" type="{{focusStartDate? 'datetime-local': 'text'}}"
+            placeholder="Выберите дату..." formControlName="dateStart">
+
+        </div>
+        <div>
+          <p>Дата окончания</p>
+          <input (focus)="changeTypeFocusEnd()" (blur)="changeTypeBlurEnd()"
+            type="{{focusEndDate? 'datetime-local': 'text'}}" class="form__input time-input form-arrow"
+            placeholder="Выберите дату..." formControlName="dateEnd">
+        </div>
+      </div>
+      <div class="form__errors">
+        <!-- Выводим сообщение об ошибке при валидации -->
+        <small *ngIf="form.controls.dateStart.invalid && form.controls.dateStart.touched">
+          Введите дату и время</small>
+        <small *ngIf="form.controls.dateEnd.invalid && form.controls.dateEnd.touched">
+          Введите дату и время</small>
+      </div>
+
+      <div class="form__crane">
+        <h3>Первый кран</h3>
+        <div class="form__crane--titles">
+          <p>Грузовик</p>
+          <p>Погружено, т</p>
+          <p>Выгружено, т</p>
+        </div>
+
+        <!-- создаем FormArray -->
+        <ng-container formArrayName="firstCrane" *ngFor="let formGroup of firstCrane.controls; let idx = index">
+          <div [formGroupName]="idx" class="form__crane--data">
+            <select [class.dirty-input]="firstCrane.controls[idx].get('selectTruck')?.dirty"
+              class="form__input tap-input form-arrow" (change)="onAddForminArray($event, idx, firstCrane)"
+              formControlName="selectTruck">
+              <option value="" selected disabled hidden>Выберите машину...</option>
+              <option ngValue="{{truck.name}}" *ngFor=" let truck of trucks">{{truck.name}}</option>
+            </select>
+            <!-- устанавливаем различные классы в зависимости от условий(меняем доступность inputб меняем шрифт) -->
+            <input [class.dirty-input]="firstCrane.controls[idx].get('loaded')?.dirty" [class.input-disabled]="firstCrane.controls[idx].get('selectTruck')?.pristine
+          || firstCrane.controls[idx].get('unloaded')?.value !==null" class="form__input data-input" type="number"
+              formControlName="loaded">
+            <input [class.dirty-input]="firstCrane.controls[idx].get('unloaded')?.dirty" [class.input-disabled]="firstCrane.controls[idx].get('selectTruck')?.pristine
+          || firstCrane.controls[idx].get('loaded')?.value !==null" class="form__input data-input" type="number"
+              formControlName="unloaded">
+
+            <!-- кнопку удаления прячем если группа в массиве находится в конце  -->
+            <button [class.hidden]="firstCrane.length === idx+1" title="Удалить информацию" class="form__crane--button"
+              type="button" (click)="deleteFormGroup(idx, firstCrane)"><img src="../../assets/svg/trash-alt-regular.svg"
+                alt="delete info"></button>
+          </div>
+        </ng-container>
+        <!-- прячем или скрываем выбор второго крана в форме -->
+        <div class="form__crane" *ngIf="this.form.value.selectCrane==='Двойной'">
+          <h3>Второй кран</h3>
+
+          <ng-container formArrayName="secondCrane" *ngFor="let formGroup of secondCrane.controls; let idx = index">
+            <div [formGroupName]="idx" class="form__crane--data">
+              <select [class.dirty-input]="secondCrane.controls[idx].get('selectTruck')?.dirty"
+                class="form__input tap-input form-arrow" (change)="onAddForminArray($event, idx, secondCrane)"
+                formControlName="selectTruck">
+                <option value="" selected disabled hidden>Выберите машину...</option>
+                <option ngValue="{{truck.name}}" *ngFor=" let truck of trucks">{{truck.name}}</option>
+              </select>
+
+              <input [class.dirty-input]="secondCrane.controls[idx].get('loaded')?.dirty" [class.input-disabled]="secondCrane.controls[idx].get('selectTruck')?.pristine
+          || secondCrane.controls[idx].get('unloaded')?.value !==null" class="form__input data-input" type="number"
+                formControlName="loaded">
+              <input [class.dirty-input]="secondCrane.controls[idx].get('unloaded')?.dirty" [class.input-disabled]="secondCrane.controls[idx].get('selectTruck')?.pristine
+          || secondCrane.controls[idx].get('loaded')?.value !==null" class="form__input data-input" type="number"
+                formControlName="unloaded">
+
+              <button [class.hidden]="secondCrane.length === idx+1" title="Удалить информацию"
+                class="form__crane--button" type="button" (click)="deleteFormGroup(idx, secondCrane)"><img
+                  src="../../assets/svg/trash-alt-regular.svg" alt="delete info"></button>
+            </div>
+          </ng-container>
+
+        </div>
+
+      </div>
+
+      <hr>
+
+      <div class="form__total">
+        <div>
+          <p>Всего погружено </p>
+          <p>Всего выгружено </p>
+        </div>
+        <div class="numb">
+          <!-- считаем общий погруженный или разгруженынй груз -->
+          <p>{{loaded}} т</p>
+          <p>{{unloaded}} т</p>
+        </div>
+      </div>
+
+      <div class="form__buttons">
+        <button (click)="modal(modalShow)" class="btn__closed" type="button">Закрыть</button>
+        <button class="btn__save" type="submit" [disabled]="!form.valid">Сохранить</button>
+      </div>
+
+    </form>
+  </div>
+</div>

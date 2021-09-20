@@ -1,0 +1,21 @@
+.header {
+  text-align: center;
+  border-bottom: 2px solid black;
+  border-top: 2px solid black;
+  position: relative;
+  margin-top: 3vh;
+}
+
+.header__button {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translate(0, -50%);
+  font-size: 3rem;
+  border: none;
+  background-color: #ffffff;
+}
+
+.header__button:hover {
+  color: grey;
+}

@@ -1,0 +1,47 @@
+<main class="main">
+  <table class="table">
+    <col class="column1">
+    <col class="column2">
+    <col class="column3">
+    <col class="column4">
+    <col class="column5">
+    <col class="column6">
+    <col class="column7">
+    <thead>
+      <tr class="thead">
+        <th>ФИО</th>
+        <th>Начало</th>
+        <th>Окончание</th>
+        <th>Тип крана</th>
+        <th>Погружено тонн</th>
+        <th>Выгружено тонн</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- рисуем строки таблицы в зависимости от сохраненных данных -->
+      <ng-container *ngFor="let row of data; let idx = index">
+        <!-- красим в зеленоватый цвет четные строки таблицы -->
+        <tr [class.even-rows]="idx % 2 !== 0">
+          <td>{{row.employeeName}}</td>
+          <!-- с помощью pipe приводим формат даты в нужный формат  -->
+          <td>{{row.dateStart | date: 'dd.MM.yy HH-mm'}}</td>
+          <td>{{row.dateEnd | date: 'dd.MM.yy HH-mm'}}</td>
+          <td>{{row.selectCrane}}</td>
+          <td>{{row.loaded + ' т'}}</td>
+          <td>{{row.unloaded + ' т'}}</td>
+          <td class="table__action">
+            <!-- редактируем или удаляем форму -->
+            <button (click)="editForm(idx, $event)" title="Редактировать смену" type="button"
+              class="table__edit--btn"><img src="../../assets/svg/edit-regular.svg" alt="edit row"></button>
+            <button (click)="deleteRow(idx)" title="Удалить смену" type="button"><img
+                src="../../assets/svg/trash-alt-regular.svg" alt="delete row"></button>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+
+
+
+</main>

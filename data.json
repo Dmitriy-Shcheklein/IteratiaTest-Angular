@@ -1,0 +1,32 @@
+[
+  {
+    "selectCrane": "twice",
+    "employeeName": "выфвфвфффвы",
+    "dateStart": "2021-09-19T11:54",
+    "dateEnd": "2021-09-19T11:54",
+    "firstCrane": [
+      {
+        "selectTruck": "Грузовик 2",
+        "loaded": 213,
+        "unloaded": null
+      },
+      {
+        "selectTruck": "",
+        "loaded": null,
+        "unloaded": null
+      }
+    ],
+    "secondCrane": [
+      {
+        "selectTruck": "Грузовик 4",
+        "loaded": null,
+        "unloaded": 213
+      },
+      {
+        "selectTruck": "",
+        "loaded": null,
+        "unloaded": null
+      }
+    ]
+  }
+]
